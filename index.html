@@ -3,147 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RifqyTracker - OSINT Tool</title>
+    <title>RifqyTracker - Advanced OSINT</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', sans-serif; background: #050505; color: white; }
         .mono { font-family: 'JetBrains Mono', monospace; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); }
-        /* Animasi Loading */
-        @keyframes pulse-ring {
-            0% { transform: scale(0.8); opacity: 0.5; }
-            100% { transform: scale(1.2); opacity: 0; }
-        }
-        .loading-ring::before {
-            content: ''; position: absolute; width: 100%; height: 100%;
-            border-radius: 50%; border: 2px solid #22c55e;
-            animation: pulse-ring 1.5s infinite;
-        }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .glow-text { text-shadow: 0 0 20px rgba(34, 197, 94, 0.5); }
     </style>
 </head>
-<body class="bg-[#050505] text-white min-h-screen flex flex-col items-center pt-10 px-4">
+<body class="flex flex-col items-center min-h-screen pt-10 px-4 pb-10">
 
-    <div class="w-full max-w-md flex justify-between items-center mb-10">
+    <div class="w-full max-w-lg flex justify-between items-center mb-8">
         <div class="flex items-center gap-2">
-            <i class="fa-solid fa-radar text-green-500 animate-pulse"></i>
-            <span class="font-bold text-lg tracking-wide">RifqyTracker.</span>
+            <i class="fa-solid fa-crosshairs text-green-500 animate-pulse"></i>
+            <span class="font-bold text-xl tracking-widest">RIFQY<span class="text-green-500">TRACKER</span></span>
         </div>
-        <div class="w-8 h-8 rounded-full bg-green-900/30 text-green-500 flex items-center justify-center font-bold text-xs border border-green-500/20">R</div>
+        <div class="text-[10px] bg-green-900/20 text-green-500 px-2 py-1 rounded border border-green-500/20 font-mono">V.2.0.0</div>
     </div>
 
-    <div class="text-center mb-8 relative">
-        <div class="absolute inset-0 bg-green-500/10 blur-[50px] rounded-full z-0"></div>
-        <p class="text-gray-500 text-[10px] tracking-[0.2em] uppercase font-bold relative z-10 mb-2">We find what you can't see</p>
-        <h1 class="text-4xl md:text-5xl font-extrabold relative z-10 tracking-tight">
-            Track Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-gray-200 to-gray-500">Targets</span>
-        </h1>
+    <div class="text-center mb-10">
+        <h1 class="text-4xl font-extrabold mb-2">Digital <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-green-700">Profiling</span> Tool</h1>
+        <p class="text-gray-500 text-xs tracking-[0.3em] uppercase">Email • Phone • Identity Parsing</p>
     </div>
 
-    <form id="searchForm" class="w-full max-w-md relative z-20 mb-6">
-        <div class="bg-white rounded-full p-1.5 flex items-center shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all focus-within:shadow-[0_0_30px_rgba(34,197,94,0.3)]">
-            <div class="pl-4 pr-3 py-2 border-r border-gray-200">
-                <span class="text-xs font-bold text-gray-500 flex items-center gap-1 cursor-pointer">
-                    EMAIL <i class="fa-solid fa-chevron-down text-[10px]"></i>
-                </span>
+    <div class="w-full max-w-lg mb-8 relative z-20">
+        <div class="bg-[#111] rounded-2xl p-2 border border-zinc-800 shadow-2xl flex flex-col gap-2">
+            <div class="flex gap-1 p-1 bg-black rounded-xl mb-1">
+                <button onclick="setMode('email')" id="btn-email" class="flex-1 py-2 text-xs font-bold rounded-lg bg-zinc-800 text-white transition">EMAIL</button>
+                <button onclick="setMode('phone')" id="btn-phone" class="flex-1 py-2 text-xs font-bold rounded-lg text-gray-500 hover:text-white transition">PHONE</button>
+                <button onclick="setMode('nik')" id="btn-nik" class="flex-1 py-2 text-xs font-bold rounded-lg text-gray-500 hover:text-white transition">NIK / KTP</button>
             </div>
-            <input type="email" id="emailInput" placeholder="username@gmail.com" required 
-                class="flex-grow bg-transparent text-black px-3 py-2 outline-none placeholder-gray-400 font-medium">
-            <button type="submit" class="bg-black text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-zinc-800 transition">
-                <i class="fa-solid fa-magnifying-glass text-sm"></i>
-            </button>
-        </div>
-        <div class="flex justify-between text-[10px] text-gray-600 px-4 mt-2 font-mono">
-            <span>TYPE TO SEARCH</span>
-            <span>USAGE: 6/10</span>
-        </div>
-    </form>
-
-    <div id="statusCard" class="hidden w-full max-w-md mb-8">
-        <div class="bg-[#0f0f0f] border border-zinc-800 rounded-3xl p-5 relative overflow-hidden">
-            <div class="flex justify-between items-start mb-4">
-                <span class="text-[10px] text-gray-500 font-bold tracking-widest uppercase">Digital Footprint</span>
-                <span class="bg-green-900/20 text-green-500 text-[10px] px-2 py-1 rounded border border-green-500/20 font-bold">CHECK COMPLETED</span>
-            </div>
-            <div class="flex items-center gap-3 mb-4">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg" class="w-8 h-8">
-                <span id="targetEmail" class="font-bold text-lg text-gray-200 truncate">...</span>
-            </div>
-            <div class="flex gap-2">
-                <span class="px-2 py-1 bg-zinc-800 rounded text-[10px] text-gray-400 border border-zinc-700">SYNTAX VALID</span>
-                <span class="px-2 py-1 bg-zinc-800 rounded text-[10px] text-gray-400 border border-zinc-700">DNS VERIFIED</span>
-            </div>
+            
+            <form id="searchForm" class="flex items-center gap-2 px-2 pb-1">
+                <input type="text" id="searchInput" placeholder="Enter target email..." required 
+                    class="flex-grow bg-transparent text-white px-3 py-3 outline-none font-mono text-sm placeholder-gray-600">
+                <button type="submit" class="bg-green-600 hover:bg-green-500 text-black w-10 h-10 rounded-xl flex items-center justify-center transition shadow-[0_0_15px_rgba(34,197,94,0.4)]">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </form>
         </div>
     </div>
 
-    <div id="resultsList" class="hidden w-full max-w-md space-y-3 pb-10">
-        <p class="text-gray-500 text-[10px] font-bold uppercase tracking-widest px-2">Found Registrations (3)</p>
+    <div id="loading" class="hidden text-center py-10">
+        <i class="fa-solid fa-circle-notch fa-spin text-3xl text-green-500 mb-4"></i>
+        <p class="text-xs text-gray-500 font-mono animate-pulse">CONNECTING TO DATABASE...</p>
+    </div>
+
+    <div id="resultContainer" class="hidden w-full max-w-lg space-y-4">
         
-        <div class="glass border border-zinc-800 p-3 rounded-2xl flex justify-between items-center hover:bg-zinc-900/50 transition cursor-pointer group">
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 bg-[#FF0000] rounded-xl flex items-center justify-center text-white font-bold shadow-lg">
-                    <i class="fa-brands fa-adobe text-xl"></i>
-                </div>
-                <span class="text-base font-semibold text-gray-200 group-hover:text-white">Adobe</span>
+        <div class="glass rounded-2xl p-5 flex justify-between items-center">
+            <div>
+                <div class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Target Analysis</div>
+                <div id="resultTarget" class="font-bold text-lg text-white font-mono">...</div>
             </div>
-            <span class="bg-green-500/10 text-green-500 text-[10px] px-3 py-1.5 rounded-full border border-green-500/20 font-bold uppercase flex items-center gap-1.5">
-                <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> Registered
+            <span class="bg-green-500/10 text-green-400 text-[10px] px-3 py-1 rounded-full border border-green-500/20 font-bold">
+                COMPLETED
             </span>
         </div>
 
-        <div class="glass border border-zinc-800 p-3 rounded-2xl flex justify-between items-center hover:bg-zinc-900/50 transition cursor-pointer group">
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 bg-[#1DB954] rounded-full flex items-center justify-center text-black font-bold shadow-lg">
-                    <i class="fa-brands fa-spotify text-xl"></i>
-                </div>
-                <span class="text-base font-semibold text-gray-200 group-hover:text-white">Spotify</span>
-            </div>
-            <span class="bg-green-500/10 text-green-500 text-[10px] px-3 py-1.5 rounded-full border border-green-500/20 font-bold uppercase flex items-center gap-1.5">
-                <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> Registered
-            </span>
-        </div>
-
-         <div class="glass border border-zinc-800 p-3 rounded-2xl flex justify-between items-center hover:bg-zinc-900/50 transition cursor-pointer group">
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 bg-black border border-zinc-700 rounded-xl flex items-center justify-center text-white font-bold shadow-lg">
-                    <i class="fa-brands fa-x-twitter text-xl"></i>
-                </div>
-                <span class="text-base font-semibold text-gray-200 group-hover:text-white">X (Twitter)</span>
-            </div>
-            <span class="bg-green-500/10 text-green-500 text-[10px] px-3 py-1.5 rounded-full border border-green-500/20 font-bold uppercase flex items-center gap-1.5">
-                <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> Registered
-            </span>
-        </div>
+        <div id="dynamicContent" class="space-y-3"></div>
     </div>
 
     <script>
-        const form = document.getElementById('searchForm');
-        const statusCard = document.getElementById('statusCard');
-        const resultsList = document.getElementById('resultsList');
-        const targetEmail = document.getElementById('targetEmail');
-        const input = document.getElementById('emailInput');
+        let currentMode = 'email';
+        
+        function setMode(mode) {
+            currentMode = mode;
+            // Update UI Tabs
+            ['email', 'phone', 'nik'].forEach(m => {
+                const btn = document.getElementById(`btn-${m}`);
+                if(m === mode) {
+                    btn.classList.add('bg-zinc-800', 'text-white');
+                    btn.classList.remove('text-gray-500');
+                } else {
+                    btn.classList.remove('bg-zinc-800', 'text-white');
+                    btn.classList.add('text-gray-500');
+                }
+            });
 
-        form.addEventListener('submit', (e) => {
+            // Update Placeholder
+            const input = document.getElementById('searchInput');
+            if(mode === 'email') input.placeholder = "Example: user@gmail.com";
+            if(mode === 'phone') input.placeholder = "Example: 08123456789";
+            if(mode === 'nik') input.placeholder = "Example: 3171234567890001";
+            input.value = '';
+        }
+
+        document.getElementById('searchForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = input.value;
-            
-            // Efek Loading Dummy
-            const btn = form.querySelector('button');
-            const originalIcon = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
-            
-            // Simulasi Fetch API (tunggu 1.5 detik)
-            setTimeout(() => {
-                targetEmail.textContent = email;
-                statusCard.classList.remove('hidden');
-                resultsList.classList.remove('hidden');
-                btn.innerHTML = originalIcon;
-                
-                // Disini nanti kamu panggil fetch('/api/check?email=' + email)
-            }, 1500);
+            const query = document.getElementById('searchInput').value;
+            const loading = document.getElementById('loading');
+            const container = document.getElementById('resultContainer');
+            const content = document.getElementById('dynamicContent');
+            const targetLabel = document.getElementById('resultTarget');
+
+            // Reset UI
+            container.classList.add('hidden');
+            loading.classList.remove('hidden');
+            content.innerHTML = '';
+
+            try {
+                // CALL BACKEND API
+                const res = await fetch(`/api/check?type=${currentMode}&q=${query}`);
+                const data = await res.json();
+
+                loading.classList.add('hidden');
+                container.classList.remove('hidden');
+                targetLabel.innerText = query;
+
+                if(data.error) {
+                    content.innerHTML = `<div class="p-4 bg-red-900/20 border border-red-500/50 rounded-xl text-red-400 text-sm text-center">${data.error}</div>`;
+                    return;
+                }
+
+                // RENDER HASIL BERDASARKAN TIPE
+                let html = '';
+
+                // 1. Render NIK
+                if(currentMode === 'nik') {
+                    html += createCard('fa-map', 'Provinsi & Kota', `${data.data.provinsi}, ${data.data.kota}`, 'green');
+                    html += createCard('fa-calendar', 'Tanggal Lahir', data.data.tanggal_lahir, 'blue');
+                    html += createCard('fa-venus-mars', 'Jenis Kelamin', data.data.jenis_kelamin, data.data.jenis_kelamin === 'LAKI-LAKI' ? 'blue' : 'pink');
+                    html += createCard('fa-fingerprint', 'Nomor Urut', data.data.nomor_urut, 'gray');
+                }
+
+                // 2. Render Phone
+                if(currentMode === 'phone') {
+                    html += createCard('fa-sim-card', 'Provider', data.data.provider, 'yellow');
+                    html += createCard('fa-location-dot', 'Region / Prefix', data.data.region, 'green');
+                    html += createCard('fa-whatsapp', 'WhatsApp Check', data.data.whatsapp ? 'Terdaftar' : 'Tidak Diketahui', 'green');
+                }
+
+                // 3. Render Email
+                if(currentMode === 'email') {
+                    data.data.platforms.forEach(p => {
+                        html += `
+                        <div class="glass p-3 rounded-xl flex justify-between items-center">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-white"><i class="${p.icon}"></i></div>
+                                <span class="font-bold text-sm">${p.name}</span>
+                            </div>
+                            <span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded border border-green-500/20">REGISTERED</span>
+                        </div>`;
+                    });
+                }
+
+                content.innerHTML = html;
+
+            } catch (err) {
+                loading.classList.add('hidden');
+                alert("Terjadi kesalahan sistem.");
+            }
         });
+
+        function createCard(icon, label, value, color) {
+            const colors = {
+                green: 'text-green-500 bg-green-500/10',
+                blue: 'text-blue-500 bg-blue-500/10',
+                pink: 'text-pink-500 bg-pink-500/10',
+                yellow: 'text-yellow-500 bg-yellow-500/10',
+                gray: 'text-gray-400 bg-gray-500/10'
+            };
+            return `
+            <div class="glass p-4 rounded-xl flex items-center gap-4">
+                <div class="w-10 h-10 rounded-lg ${colors[color]} flex items-center justify-center text-lg">
+                    <i class="fa-solid ${icon}"></i>
+                </div>
+                <div>
+                    <div class="text-[10px] text-gray-500 uppercase font-bold">${label}</div>
+                    <div class="text-sm font-bold text-gray-200">${value}</div>
+                </div>
+            </div>`;
+        }
     </script>
 </body>
 </html>
