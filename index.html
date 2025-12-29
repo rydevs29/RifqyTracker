@@ -3,93 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RifqyTracker - Advanced OSINT</title>
+    <title>RifqyTracker - OSINT Intelligence</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Inter', sans-serif; background: #050505; color: white; }
+        body { font-family: 'Inter', sans-serif; background: #09090b; color: #e4e4e7; }
         .mono { font-family: 'JetBrains Mono', monospace; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        .glow-text { text-shadow: 0 0 20px rgba(34, 197, 94, 0.5); }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.08); }
+        .scan-line {
+            width: 100%; height: 2px; background: #22c55e;
+            position: absolute; top: 0; left: 0;
+            animation: scan 2s linear infinite; opacity: 0.5;
+        }
+        @keyframes scan { 0% { top: 0%; } 100% { top: 100%; } }
     </style>
 </head>
-<body class="flex flex-col items-center min-h-screen pt-10 px-4 pb-10">
+<body class="flex flex-col items-center min-h-screen py-10 px-4">
 
-    <div class="w-full max-w-lg flex justify-between items-center mb-8">
-        <div class="flex items-center gap-2">
-            <i class="fa-solid fa-crosshairs text-green-500 animate-pulse"></i>
-            <span class="font-bold text-xl tracking-widest">RIFQY<span class="text-green-500">TRACKER</span></span>
+    <div class="text-center mb-10 space-y-2">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-900/20 border border-green-500/20 text-green-500 text-[10px] font-bold tracking-widest uppercase">
+            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> System Online
         </div>
-        <div class="text-[10px] bg-green-900/20 text-green-500 px-2 py-1 rounded border border-green-500/20 font-mono">V.2.0.0</div>
+        <h1 class="text-4xl md:text-5xl font-black tracking-tighter text-white">RIFQY<span class="text-green-600">TRACKER</span></h1>
+        <p class="text-zinc-500 text-xs font-mono uppercase tracking-widest">Open Source Intelligence Tool v3.5</p>
     </div>
 
-    <div class="text-center mb-10">
-        <h1 class="text-4xl font-extrabold mb-2">Digital <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-green-700">Profiling</span> Tool</h1>
-        <p class="text-gray-500 text-xs tracking-[0.3em] uppercase">Email • Phone • Identity Parsing</p>
-    </div>
-
-    <div class="w-full max-w-lg mb-8 relative z-20">
-        <div class="bg-[#111] rounded-2xl p-2 border border-zinc-800 shadow-2xl flex flex-col gap-2">
-            <div class="flex gap-1 p-1 bg-black rounded-xl mb-1">
-                <button onclick="setMode('email')" id="btn-email" class="flex-1 py-2 text-xs font-bold rounded-lg bg-zinc-800 text-white transition">EMAIL</button>
-                <button onclick="setMode('phone')" id="btn-phone" class="flex-1 py-2 text-xs font-bold rounded-lg text-gray-500 hover:text-white transition">PHONE</button>
-                <button onclick="setMode('nik')" id="btn-nik" class="flex-1 py-2 text-xs font-bold rounded-lg text-gray-500 hover:text-white transition">NIK / KTP</button>
+    <div class="w-full max-w-lg relative z-10">
+        <div class="bg-[#121212] border border-zinc-800 rounded-2xl p-4 shadow-2xl mb-6">
+            <div class="grid grid-cols-3 gap-1 mb-4 p-1 bg-black rounded-xl">
+                <button onclick="setMode('nik')" id="btn-nik" class="tab-btn py-2 text-[10px] font-bold rounded-lg bg-zinc-800 text-white border border-zinc-700">NIK / KTP</button>
+                <button onclick="setMode('phone')" id="btn-phone" class="tab-btn py-2 text-[10px] font-bold rounded-lg text-zinc-500 hover:text-white transition">PHONE</button>
+                <button onclick="setMode('email')" id="btn-email" class="tab-btn py-2 text-[10px] font-bold rounded-lg text-zinc-500 hover:text-white transition">EMAIL</button>
             </div>
-            
-            <form id="searchForm" class="flex items-center gap-2 px-2 pb-1">
-                <input type="text" id="searchInput" placeholder="Enter target email..." required 
-                    class="flex-grow bg-transparent text-white px-3 py-3 outline-none font-mono text-sm placeholder-gray-600">
-                <button type="submit" class="bg-green-600 hover:bg-green-500 text-black w-10 h-10 rounded-xl flex items-center justify-center transition shadow-[0_0_15px_rgba(34,197,94,0.4)]">
-                    <i class="fa-solid fa-magnifying-glass"></i>
+
+            <form id="searchForm" class="relative">
+                <div class="absolute left-4 top-3.5 text-zinc-500"><i class="fa-solid fa-terminal"></i></div>
+                <input type="text" id="searchInput" placeholder="Masukkan 16 Digit NIK..." required 
+                    class="w-full bg-[#0a0a0a] border border-zinc-800 text-white pl-10 pr-12 py-3 rounded-xl outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600 font-mono text-sm transition placeholder-zinc-600">
+                <button type="submit" class="absolute right-2 top-2 bg-green-600 hover:bg-green-500 text-black w-8 h-8 rounded-lg flex items-center justify-center transition font-bold">
+                    <i class="fa-solid fa-arrow-right"></i>
                 </button>
             </form>
         </div>
-    </div>
 
-    <div id="loading" class="hidden text-center py-10">
-        <i class="fa-solid fa-circle-notch fa-spin text-3xl text-green-500 mb-4"></i>
-        <p class="text-xs text-gray-500 font-mono animate-pulse">CONNECTING TO DATABASE...</p>
-    </div>
-
-    <div id="resultContainer" class="hidden w-full max-w-lg space-y-4">
-        
-        <div class="glass rounded-2xl p-5 flex justify-between items-center">
-            <div>
-                <div class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Target Analysis</div>
-                <div id="resultTarget" class="font-bold text-lg text-white font-mono">...</div>
+        <div id="loading" class="hidden my-8 text-center">
+            <div class="inline-block relative w-16 h-16 mb-4">
+                <div class="absolute inset-0 border-4 border-zinc-800 rounded-full"></div>
+                <div class="absolute inset-0 border-4 border-t-green-500 rounded-full animate-spin"></div>
             </div>
-            <span class="bg-green-500/10 text-green-400 text-[10px] px-3 py-1 rounded-full border border-green-500/20 font-bold">
-                COMPLETED
-            </span>
+            <p class="text-xs text-green-500 font-mono animate-pulse">CONNECTING TO DATABASES...</p>
+            <p id="loading-text" class="text-[10px] text-zinc-600 mt-1">Decrypting Hash...</p>
         </div>
 
-        <div id="dynamicContent" class="space-y-3"></div>
+        <div id="resultContainer" class="hidden space-y-4">
+            <div class="glass p-5 rounded-2xl flex justify-between items-center relative overflow-hidden">
+                <div class="scan-line"></div>
+                <div>
+                    <div class="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-1">Search Target</div>
+                    <div id="targetDisplay" class="font-bold text-lg text-white font-mono tracking-tight">...</div>
+                </div>
+                <div class="text-right">
+                    <div class="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-1">Risk Score</div>
+                    <span id="riskBadge" class="bg-green-500/10 text-green-400 text-xs px-2 py-1 rounded border border-green-500/20 font-bold">LOW</span>
+                </div>
+            </div>
+
+            <div id="dynamicContent" class="grid grid-cols-1 gap-3"></div>
+        </div>
     </div>
 
     <script>
-        let currentMode = 'email';
+        let currentMode = 'nik';
         
         function setMode(mode) {
             currentMode = mode;
-            // Update UI Tabs
-            ['email', 'phone', 'nik'].forEach(m => {
-                const btn = document.getElementById(`btn-${m}`);
-                if(m === mode) {
-                    btn.classList.add('bg-zinc-800', 'text-white');
-                    btn.classList.remove('text-gray-500');
-                } else {
-                    btn.classList.remove('bg-zinc-800', 'text-white');
-                    btn.classList.add('text-gray-500');
-                }
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = `tab-btn py-2 text-[10px] font-bold rounded-lg transition ${btn.id === 'btn-'+mode ? 'bg-zinc-800 text-white border border-zinc-700' : 'text-zinc-500 hover:text-white'}`;
             });
-
-            // Update Placeholder
+            
             const input = document.getElementById('searchInput');
-            if(mode === 'email') input.placeholder = "Example: user@gmail.com";
-            if(mode === 'phone') input.placeholder = "Example: 08123456789";
-            if(mode === 'nik') input.placeholder = "Example: 3171234567890001";
+            if(mode === 'nik') input.placeholder = "Masukkan 16 Digit NIK...";
+            if(mode === 'phone') input.placeholder = "Contoh: 081234567890";
+            if(mode === 'email') input.placeholder = "Contoh: target@gmail.com";
             input.value = '';
+            document.getElementById('resultContainer').classList.add('hidden');
         }
 
         document.getElementById('searchForm').addEventListener('submit', async (e) => {
@@ -98,55 +96,115 @@
             const loading = document.getElementById('loading');
             const container = document.getElementById('resultContainer');
             const content = document.getElementById('dynamicContent');
-            const targetLabel = document.getElementById('resultTarget');
 
             // Reset UI
             container.classList.add('hidden');
             loading.classList.remove('hidden');
             content.innerHTML = '';
 
+            // Simulasi text loading hacker
+            const loadingTexts = ["Bypassing Firewall...", "Accessing Public Records...", "Parsing Data...", "Finalizing Report..."];
+            let step = 0;
+            const interval = setInterval(() => {
+                if(step < loadingTexts.length) document.getElementById('loading-text').innerText = loadingTexts[step++];
+            }, 400);
+
             try {
-                // CALL BACKEND API
+                // Call API
                 const res = await fetch(`/api/check?type=${currentMode}&q=${query}`);
-                const data = await res.json();
-
+                const json = await res.json();
+                
+                clearInterval(interval);
                 loading.classList.add('hidden');
-                container.classList.remove('hidden');
-                targetLabel.innerText = query;
-
-                if(data.error) {
-                    content.innerHTML = `<div class="p-4 bg-red-900/20 border border-red-500/50 rounded-xl text-red-400 text-sm text-center">${data.error}</div>`;
+                
+                if(json.error) {
+                    alert(json.error);
                     return;
                 }
 
-                // RENDER HASIL BERDASARKAN TIPE
+                container.classList.remove('hidden');
+                document.getElementById('targetDisplay').innerText = query;
+
+                // Set Risk Badge
+                const riskEl = document.getElementById('riskBadge');
+                if(json.risk === 'HIGH') {
+                    riskEl.className = "bg-red-500/10 text-red-400 text-xs px-2 py-1 rounded border border-red-500/20 font-bold";
+                    riskEl.innerText = "HIGH RISK";
+                } else if (json.risk === 'MEDIUM') {
+                    riskEl.className = "bg-yellow-500/10 text-yellow-400 text-xs px-2 py-1 rounded border border-yellow-500/20 font-bold";
+                    riskEl.innerText = "MEDIUM";
+                } else {
+                    riskEl.className = "bg-green-500/10 text-green-400 text-xs px-2 py-1 rounded border border-green-500/20 font-bold";
+                    riskEl.innerText = "SAFE / CLEAN";
+                }
+
+                // Render Data Cards
                 let html = '';
-
-                // 1. Render NIK
+                
+                // NIK RENDER
                 if(currentMode === 'nik') {
-                    html += createCard('fa-map', 'Provinsi & Kota', `${data.data.provinsi}, ${data.data.kota}`, 'green');
-                    html += createCard('fa-calendar', 'Tanggal Lahir', data.data.tanggal_lahir, 'blue');
-                    html += createCard('fa-venus-mars', 'Jenis Kelamin', data.data.jenis_kelamin, data.data.jenis_kelamin === 'LAKI-LAKI' ? 'blue' : 'pink');
-                    html += createCard('fa-fingerprint', 'Nomor Urut', data.data.nomor_urut, 'gray');
+                    const d = json.data;
+                    html += card('Provinsi', d.provinsi, 'fa-map');
+                    html += card('Kota/Kab', d.kota, 'fa-city');
+                    html += card('Tanggal Lahir', `${d.tanggal_lahir} (Usia: ${d.usia})`, 'fa-calendar');
+                    html += card('Jenis Kelamin', d.jenis_kelamin, 'fa-venus-mars');
+                    html += card('Zodiak', d.zodiak, 'fa-star');
+                    html += `
+                        <div class="glass p-4 rounded-xl border-l-2 border-red-500 mt-2">
+                            <div class="text-[10px] text-zinc-500 uppercase font-bold mb-1">Identity Prediction</div>
+                            <div class="text-sm font-bold text-white tracking-widest">************ (PROTECTED)</div>
+                            <div class="text-[10px] text-red-400 mt-1"><i class="fa-solid fa-lock"></i> Requires Government Warrant</div>
+                        </div>
+                    `;
                 }
 
-                // 2. Render Phone
+                // PHONE RENDER
                 if(currentMode === 'phone') {
-                    html += createCard('fa-sim-card', 'Provider', data.data.provider, 'yellow');
-                    html += createCard('fa-location-dot', 'Region / Prefix', data.data.region, 'green');
-                    html += createCard('fa-whatsapp', 'WhatsApp Check', data.data.whatsapp ? 'Terdaftar' : 'Tidak Diketahui', 'green');
+                    const d = json.data;
+                    html += card('Provider', d.provider, 'fa-sim-card');
+                    html += card('Region', d.region, 'fa-location-dot');
+                    
+                    // Tags Section
+                    let tagsHtml = d.tags.map(t => `<span class="px-2 py-1 bg-zinc-800 rounded text-[10px] border border-zinc-700 text-zinc-300">${t}</span>`).join(' ');
+                    html += `
+                        <div class="glass p-4 rounded-xl">
+                            <div class="flex items-center gap-3 mb-2">
+                                <div class="w-8 h-8 rounded bg-blue-500/10 text-blue-500 flex items-center justify-center"><i class="fa-solid fa-tags"></i></div>
+                                <div class="text-[10px] text-zinc-500 uppercase font-bold">Community Tags</div>
+                            </div>
+                            <div class="flex flex-wrap gap-2">${tagsHtml}</div>
+                        </div>
+                    `;
+
+                    html += `
+                        <div class="glass p-4 rounded-xl border-l-2 border-yellow-500">
+                            <div class="text-[10px] text-zinc-500 uppercase font-bold mb-1">Possible Owner (CNAM)</div>
+                            <div class="text-sm font-bold text-white">${d.owner_name}</div>
+                        </div>
+                    `;
                 }
 
-                // 3. Render Email
+                // EMAIL RENDER
                 if(currentMode === 'email') {
-                    data.data.platforms.forEach(p => {
-                        html += `
-                        <div class="glass p-3 rounded-xl flex justify-between items-center">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-white"><i class="${p.icon}"></i></div>
-                                <span class="font-bold text-sm">${p.name}</span>
+                    const d = json.data;
+                    html += `
+                        <div class="glass p-4 rounded-xl flex items-center justify-between">
+                            <div>
+                                <div class="text-[10px] text-zinc-500 uppercase font-bold">Breach Status</div>
+                                <div class="text-sm font-bold text-white">${d.breach_count} Datasets Found</div>
                             </div>
-                            <span class="text-[10px] bg-green-500/20 text-green-400 px-2 py-1 rounded border border-green-500/20">REGISTERED</span>
+                            <div class="text-2xl text-red-500"><i class="fa-solid fa-bug"></i></div>
+                        </div>
+                    `;
+                    
+                    d.leaks.forEach(leak => {
+                        html += `
+                        <div class="glass p-3 rounded-xl flex items-center gap-3">
+                            <div class="w-8 h-8 rounded bg-white/5 flex items-center justify-center text-zinc-400"><i class="fa-solid fa-database"></i></div>
+                            <div>
+                                <div class="text-xs font-bold text-white">${leak.source}</div>
+                                <div class="text-[10px] text-zinc-500">${leak.date}</div>
+                            </div>
                         </div>`;
                     });
                 }
@@ -155,26 +213,19 @@
 
             } catch (err) {
                 loading.classList.add('hidden');
-                alert("Terjadi kesalahan sistem.");
+                alert("Error connecting to server.");
             }
         });
 
-        function createCard(icon, label, value, color) {
-            const colors = {
-                green: 'text-green-500 bg-green-500/10',
-                blue: 'text-blue-500 bg-blue-500/10',
-                pink: 'text-pink-500 bg-pink-500/10',
-                yellow: 'text-yellow-500 bg-yellow-500/10',
-                gray: 'text-gray-400 bg-gray-500/10'
-            };
+        function card(label, value, icon) {
             return `
-            <div class="glass p-4 rounded-xl flex items-center gap-4">
-                <div class="w-10 h-10 rounded-lg ${colors[color]} flex items-center justify-center text-lg">
+            <div class="glass p-3 rounded-xl flex items-center gap-4">
+                <div class="w-8 h-8 rounded bg-zinc-800 flex items-center justify-center text-zinc-400">
                     <i class="fa-solid ${icon}"></i>
                 </div>
                 <div>
-                    <div class="text-[10px] text-gray-500 uppercase font-bold">${label}</div>
-                    <div class="text-sm font-bold text-gray-200">${value}</div>
+                    <div class="text-[10px] text-zinc-500 uppercase font-bold">${label}</div>
+                    <div class="text-sm font-bold text-white">${value}</div>
                 </div>
             </div>`;
         }
